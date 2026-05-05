@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kobadai <kobadai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/03 16:32:40 by kobadai           #+#    #+#             */
-/*   Updated: 2026/05/05 00:22:18 by kobadai          ###   ########.fr       */
+/*   Created: 2026/05/05 18:59:36 by kobadai           #+#    #+#             */
+/*   Updated: 2026/05/05 18:59:37 by kobadai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {
@@ -20,28 +20,6 @@ size_t	ft_strlen(const char *s)
 	while (s[i])
 		i++;
 	return (i);
-}
-
-int	ft_getc(int fd)
-{
-	static char	buf[BUFFER_SIZE];
-	static char	*bufp;
-	static int	n = 0;
-
-	if (n == 0)
-	{
-		n = read(fd, buf, BUFFER_SIZE);
-		if (n == 0)
-			return (EOF);
-		if (n < 0)
-		{
-			n = 0;
-			return (-2);
-		}
-		bufp = buf;
-	}
-	n--;
-	return ((unsigned char)*bufp++);
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)
