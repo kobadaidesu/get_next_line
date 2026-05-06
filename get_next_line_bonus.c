@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kobadai <kobadai@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/05 18:59:32 by kobadai           #+#    #+#             */
+/*   Updated: 2026/05/06 00:00:00 by kobadai          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line_bonus.h"
 
 static char	*end_read(char *line, int is_error)
@@ -39,6 +51,8 @@ char	*get_next_line(int fd)
 	if (fd < 0 || fd >= OPEN_MAX)
 		return (NULL);
 	line = malloc(1);
+	if (!line)
+		return (NULL);
 	line[0] = '\0';
 	temp[1] = '\0';
 	c = ft_getc_fd(fd, &state[fd]);
@@ -47,6 +61,8 @@ char	*get_next_line(int fd)
 		temp[0] = c;
 		new_line = ft_strjoin(line, temp);
 		free(line);
+		if (!new_line)
+			return (NULL);
 		line = new_line;
 		if (temp[0] == '\n')
 			return (line);
