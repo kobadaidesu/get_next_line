@@ -6,63 +6,114 @@
 /*   By: kobadai <kobadai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 16:29:32 by kobadai           #+#    #+#             */
-/*   Updated: 2026/05/05 16:33:24 by kobadai          ###   ########.fr       */
+/*   Updated: 2026/06/04 00:00:00 by kobadai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*end_read(char *line, int is_error)
+static int	has_newline(t_gnl *state)
 {
-	if (is_error || !line[0])
+	if (state == NULL || state->len == 0)
+		return (0);
+	return (state->data[ft_line_len(state) - 1] == '\n');
+}
+
+static int	read_to_state(int fd, t_gnl **state)
+{
+	ssize_t	bytes;
+
+	if (ft_init_state(state) == GNL_ERROR)
+		return (GNL_ERROR);
+	bytes = 1;
+	while (!has_newline(*state) && bytes > 0)
 	{
-		free(line);
-		return (NULL);
+		if (ft_ensure_capacity(*state, (*state)->len
+				+ GNL_BUFFER_SIZE) == GNL_ERROR)
+		{
+			ft_clear_state(state);
+			return (GNL_ERROR);
+		}
+		bytes = read(fd, (*state)->data + (*state)->len, GNL_BUFFER_SIZE);
+		if (bytes < 0)
+		{
+			ft_clear_state(state);
+			return (GNL_ERROR);
+		}
+		(*state)->len += bytes;
+		(*state)->data[(*state)->len] = '\0';
 	}
+	return (GNL_OK);
+}
+
+static char	*make_line(t_gnl *state, size_t len)
+{
+	char	*line;
+
+	if (state == NULL || state->len == 0)
+		return (NULL);
+	line = malloc(len + 1);
+	if (line == NULL)
+		return (NULL);
+	ft_memcpy_gnl(line, state->data, len);
+	line[len] = '\0';
 	return (line);
+}
+
+static void	trim_state(t_gnl **state, size_t len)
+{
+	size_t	rest;
+
+	if (*state == NULL)
+		return ;
+	rest = (*state)->len - len;
+	if (rest == 0)
+	{
+		ft_clear_state(state);
+		return ;
+	}
+	ft_memcpy_gnl((*state)->data, (*state)->data + len, rest);
+	(*state)->len = rest;
+	(*state)->data[rest] = '\0';
 }
 
 char	*get_next_line(int fd)
 {
-	char	temp[2];
-	char	*line;
-	char	*new_line;
-	int		c;
+	static t_gnl	*state;
+	char			*line;
+	size_t			len;
 
-	line = malloc(1);
-	if (!line)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	line[0] = '\0';
-	temp[1] = '\0';
-	c = ft_getc(fd);
-	while (c != EOF && c != -2)
-	{
-		temp[0] = c;
-		new_line = ft_strjoin(line, temp);
-		free(line);
-		if (!new_line)
-			return (NULL);
-		line = new_line;
-		if (temp[0] == '\n')
-			return (line);
-		c = ft_getc(fd);
-	}
-	return (end_read(line, c == -2));
+	if (read_to_state(fd, &state) == GNL_ERROR)
+		return (NULL);
+	if (state == NULL || state->len == 0)
+		return (ft_clear_state(&state));
+	len = ft_line_len(state);
+	line = make_line(state, len);
+	if (line == NULL)
+		return (ft_clear_state(&state));
+	trim_state(&state, len);
+	return (line);
 }
+
+// #include <fcntl.h>
+// #include <stdio.h>
 
 // int	main(void)
 // {
-// 	char	*line;
 // 	int		fd;
+// 	char	*line;
 
 // 	fd = open("test.txt", O_RDONLY);
-// 	while (1)
+// 	if (fd < 0)
+// 		return (1);
+// 	line = get_next_line(fd);
+// 	while (line)
 // 	{
-// 		line = get_next_line(fd);
-// 		if (!line)
-// 			break ;
 // 		printf("%s", line);
 // 		free(line);
+// 		line = get_next_line(fd);
 // 	}
 // 	close(fd);
 // 	return (0);

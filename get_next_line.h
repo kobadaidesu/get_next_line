@@ -13,18 +13,32 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# include <fcntl.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
+# if BUFFER_SIZE <= 0
+#  define GNL_BUFFER_SIZE 1
+# else
+#  define GNL_BUFFER_SIZE BUFFER_SIZE
+# endif
+# define GNL_ERROR 0
+# define GNL_OK 1
 
-size_t	ft_strlen(const char *s);
-char	*ft_strjoin(char const *s1, char const *s2);
-int		ft_getc(int fd);
+typedef struct s_gnl
+{
+	char	*data;
+	size_t	len;
+	size_t	cap;
+}	t_gnl;
+
+void	ft_memcpy_gnl(char *dst, const char *src, size_t n);
+char	*ft_clear_state(t_gnl **state);
+int		ft_init_state(t_gnl **state);
+int		ft_ensure_capacity(t_gnl *state, size_t need);
+size_t	ft_line_len(t_gnl *state);
 char	*get_next_line(int fd);
 
 #endif

@@ -6,59 +6,82 @@
 /*   By: kobadai <kobadai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/03 16:32:40 by kobadai           #+#    #+#             */
-/*   Updated: 2026/05/05 00:22:18 by kobadai          ###   ########.fr       */
+/*   Updated: 2026/06/04 00:00:00 by kobadai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *s)
+void	ft_memcpy_gnl(char *dst, const char *src, size_t n)
 {
 	size_t	i;
 
 	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-int	ft_getc(int fd)
-{
-	static char	buf[BUFFER_SIZE];
-	static char	*bufp;
-	static int	n = 0;
-
-	if (n == 0)
+	while (i < n)
 	{
-		n = read(fd, buf, BUFFER_SIZE);
-		if (n == 0)
-			return (EOF);
-		if (n < 0)
-		{
-			n = 0;
-			return (-2);
-		}
-		bufp = buf;
+		dst[i] = src[i];
+		i++;
 	}
-	n--;
-	return ((unsigned char)*bufp++);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_clear_state(t_gnl **state)
 {
-	char	*new_str;
-	char	*ptr;
+	if (state == NULL || *state == NULL)
+		return (NULL);
+	free((*state)->data);
+	free(*state);
+	*state = NULL;
+	return (NULL);
+}
 
-	if (!s1 || !s2)
-		return (NULL);
-	new_str = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!new_str)
-		return (NULL);
-	ptr = new_str;
-	while (*s1)
-		*ptr++ = *s1++;
-	while (*s2)
-		*ptr++ = *s2++;
-	*ptr = '\0';
-	return (new_str);
+int	ft_init_state(t_gnl **state)
+{
+	if (*state != NULL)
+		return (GNL_OK);
+	*state = malloc(sizeof(t_gnl));
+	if (*state == NULL)
+		return (GNL_ERROR);
+	(*state)->data = NULL;
+	(*state)->len = 0;
+	(*state)->cap = 0;
+	return (GNL_OK);
+}
+
+int	ft_ensure_capacity(t_gnl *state, size_t need)
+{
+	char	*new_data;
+	size_t	new_cap;
+
+	if (need + 1 <= state->cap)
+		return (GNL_OK);
+	new_cap = state->cap;
+	if (new_cap == 0)
+		new_cap = GNL_BUFFER_SIZE + 1;
+	while (new_cap <= need)
+		new_cap *= 2;
+	new_data = malloc(new_cap);
+	if (new_data == NULL)
+		return (GNL_ERROR);
+	ft_memcpy_gnl(new_data, state->data, state->len);
+	new_data[state->len] = '\0';
+	free(state->data);
+	state->data = new_data;
+	state->cap = new_cap;
+	return (GNL_OK);
+}
+
+size_t	ft_line_len(t_gnl *state)
+{
+	size_t	i;
+
+	if (state == NULL || state->data == NULL)
+		return (0);
+	i = 0;
+	while (i < state->len)
+	{
+		if (state->data[i] == '\n')
+			return (i + 1);
+		i++;
+	}
+	return (state->len);
 }

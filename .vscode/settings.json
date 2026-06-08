@@ -1,0 +1,10 @@
+{
+  "discord.detailsEditing": "{LANG}",
+  "discord.detailsDebugging": "{LANG}",
+  "discord.detailsIdling": "{empty}",
+  "discord.removeLowerDetails": true,
+  "discord.removeTimestamp": true,
+  "discord.removeRemoteRepository": true,
+  "discord.largeImage": "{LANG}",
+  "discord.largeImageIdling": "{empty}"
+}
