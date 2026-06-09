@@ -194,45 +194,7 @@ cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 get_next_line_bonus.c get_next_line_u
 
 返された文字列は `malloc` で確保されているため、呼び出し側で `free` します。
 
-### bonus の使用例
 
-```c
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include "get_next_line_bonus.h"
-
-static void	print_line(int fd)
-{
-	char	*line;
-
-	line = get_next_line(fd);
-	if (line != NULL)
-	{
-		printf("%s", line);
-		free(line);
-	}
-}
-
-int	main(void)
-{
-	int	fd1;
-	int	fd2;
-
-	fd1 = open("test.txt", O_RDONLY);
-	fd2 = open("test2.txt", O_RDONLY);
-	if (fd1 < 0 || fd2 < 0)
-		return (1);
-	print_line(fd1);
-	print_line(fd2);
-	print_line(fd1);
-	print_line(fd2);
-	close(fd1);
-	close(fd2);
-	return (0);
-}
-```
 
 ## アルゴリズムの説明
 
