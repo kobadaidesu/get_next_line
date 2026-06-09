@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kobadai <kobadai@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dakobaya <dakobaya@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 18:59:32 by kobadai           #+#    #+#             */
-/*   Updated: 2026/06/04 00:00:00 by kobadai          ###   ########.fr       */
+/*   Updated: 2026/06/09 13:54:26 by dakobaya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	read_to_state(int fd, t_gnl **state)
 			ft_clear_state(state);
 			return (GNL_ERROR);
 		}
-		(*state)->len += bytes;
+		(*state)->len += (size_t)bytes;
 		(*state)->data[(*state)->len] = '\0';
 	}
 	return (GNL_OK);
