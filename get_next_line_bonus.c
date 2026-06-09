@@ -38,12 +38,12 @@ static int	read_to_state(int fd, t_gnl **state)
 	while (find_newline(*state) == NULL && bytes > 0)
 	{
 		if (ft_ensure_capacity(*state, (*state)->len
-				+ GNL_BUFFER_SIZE) == GNL_ERROR)
+				+ BUFFER_SIZE) == GNL_ERROR)
 		{
 			ft_clear_state(state);
 			return (GNL_ERROR);
 		}
-		bytes = read(fd, (*state)->data + (*state)->len, GNL_BUFFER_SIZE);
+		bytes = read(fd, (*state)->data + (*state)->len, BUFFER_SIZE);
 		if (bytes < 0)
 		{
 			ft_clear_state(state);

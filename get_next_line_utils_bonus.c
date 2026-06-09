@@ -56,7 +56,7 @@ int	ft_ensure_capacity(t_gnl *state, size_t need)
 		return (GNL_OK);
 	new_cap = state->cap;
 	if (new_cap == 0)
-		new_cap = GNL_BUFFER_SIZE + 1;
+		new_cap = BUFFER_SIZE + 1;
 	while (new_cap <= need)
 		new_cap *= 2;
 	new_data = malloc(new_cap);

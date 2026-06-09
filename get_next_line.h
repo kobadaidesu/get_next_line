@@ -19,7 +19,6 @@
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
-# define GNL_BUFFER_SIZE BUFFER_SIZE
 # define GNL_ERROR 0
 # define GNL_OK 1
 
